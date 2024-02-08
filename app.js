@@ -13,9 +13,9 @@ const buyHistory = require('./buyHistory.js');
 const buyRequest = require('./buyRequest.js');
 const buyResponse = require('./buyResponse.js');
 
-app.use('/buy_history', buyHistory);
-app.use('/buy_request', buyRequest);
-app.use('/buy_response', buyResponse);
+app.use('/buy-history', buyHistory);
+app.use('/buy-request', buyRequest);
+app.use('/buy-response', buyResponse);
 
 app.listen(PORT, async () => {
     console.log(`Listening on port ${PORT}`);
