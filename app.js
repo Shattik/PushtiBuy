@@ -4,7 +4,6 @@ const cors = require('cors');
 const app = express();
 const axios = require('axios');
 const PORT = process.env.port;
-const supabase = require('./db.js');
 
 app.use(express.json());
 app.use(cors({ origin: "*" }));
