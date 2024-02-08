@@ -1,0 +1,27 @@
+{
+  "name": "pushtibuy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shattik/PushtiBuy.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Shattik/PushtiBuy/issues"
+  },
+  "homepage": "https://github.com/Shattik/PushtiBuy#readme",
+  "dependencies": {
+    "axios": "^1.6.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2",
+    "pg-promise": "^11.5.4"
+  }
+}
