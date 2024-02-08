@@ -9,6 +9,14 @@ const supabase = require('./db.js');
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 
+const buyHistory = require('./buyHistory.js');
+const buyRequest = require('./buyRequest.js');
+const buyResponse = require('./buyResponse.js');
+
+app.use('/buy_history', buyHistory);
+app.use('/buy_request', buyRequest);
+app.use('/buy_response', buyResponse);
+
 app.listen(PORT, async () => {
     console.log(`Listening on port ${PORT}`);
 
