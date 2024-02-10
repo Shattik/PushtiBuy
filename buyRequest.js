@@ -11,6 +11,18 @@ router.route("/farmer").post(async (req, res) => {
                                             and F."rank" = R."className"
                                             and "agentId" = $1`, [agent_id]);
         let products = await supabase.any(`select * from "Product"`);
+        for(let i=0; i<farmers.length; i++) {
+            let rem = await supabase.any(`select "ongoingLoan" from "Farmer" where "id" = (select "id" from "User" where "nid" = $1)`, [farmers[i].nid]);
+            if(rem[0].ongoingLoan == null) {
+                farmers[i].remaining = 0;
+                farmers[i].deduction = 0;
+            }
+            else {
+                let info = await supabase.any(`select "remainingAmount", "deduction" from "FarmerLoan" where "id" = $1`, [rem[0].ongoingLoan]);
+                farmers[i].remaining = info[0].remainingAmount;
+                farmers[i].deduction = info[0].deduction;
+            }
+        }
         let response = {
             farmers: farmers,
             products: products,
@@ -38,6 +50,18 @@ router.route("/sme").post(async (req, res) => {
                                         and S."rank" = R."className"
                                         and "agentId" = $1`, [agent_id]);
         let products = await supabase.any(`select * from "Product"`);
+        for(let i=0; i<smes.length; i++) {
+            let rem = await supabase.any(`select "ongoingLoan" from "Sme" where "id" = (select "id" from "User" where "nid" = $1)`, [smes[i].nid]);
+            if(rem[0].ongoingLoan == null) {
+                smes[i].remaining = 0;
+                smes[i].deduction = 0;
+            }
+            else {
+                let info = await supabase.any(`select "remainingAmount", "deduction" from "SmeLoan" where "id" = $1`, [rem[0].ongoingLoan]);
+                smes[i].remaining = info[0].remainingAmount;
+                smes[i].deduction = info[0].deduction;
+            }
+        }
         let response = {
             smes: smes,
             products: products,
@@ -55,61 +79,61 @@ router.route("/sme").post(async (req, res) => {
 
 });
 
-router.route("/farmer/info").post(async (req, res) => {
-    const { farmer_nid } = req.body;
+// router.route("/farmer/info").post(async (req, res) => {
+//     const { farmer_nid } = req.body;
 
-    try {
-        let rem = await supabase.any(`select "ongoingLoan" from "Farmer" where "id" = (select "id" from "User" where "nid" = $1)`, [farmer_nid]);
-        if(rem.length == 0) {
-            let response = {
-                remaining: 0,
-            }
-            res.status(200).send(response);
-            return;
-        }
-        let info = await supabase.any(`select "remainingAmount" from "FarmerLoan" where "id" = $1`, [rem[0].ongoingLoan]);
-        let response = {
-            remaining: info[0].remainingAmount,
-        }
-        res.status(200).send(response);
-    }
-    catch (error) {
-        console.error("Error in /buy_request/farmer/info:", error);
-        let respone = {
-            status: "failed",
-            message: "Internal server error",
-        };
-        res.status(500).send(respone);
-    }
-});
+//     try {
+//         let rem = await supabase.any(`select "ongoingLoan" from "Farmer" where "id" = (select "id" from "User" where "nid" = $1)`, [farmer_nid]);
+//         if(rem.length == 0) {
+//             let response = {
+//                 remaining: 0,
+//             }
+//             res.status(200).send(response);
+//             return;
+//         }
+//         let info = await supabase.any(`select "remainingAmount" from "FarmerLoan" where "id" = $1`, [rem[0].ongoingLoan]);
+//         let response = {
+//             remaining: info[0].remainingAmount,
+//         }
+//         res.status(200).send(response);
+//     }
+//     catch (error) {
+//         console.error("Error in /buy_request/farmer/info:", error);
+//         let respone = {
+//             status: "failed",
+//             message: "Internal server error",
+//         };
+//         res.status(500).send(respone);
+//     }
+// });
 
-router.route("/sme/info").post(async (req, res) => {
-    const { sme_nid } = req.body;
+// router.route("/sme/info").post(async (req, res) => {
+//     const { sme_nid } = req.body;
 
-    try {
-        let rem = await supabase.any(`select "ongoingLoan" from "Sme" where "id" = (select "id" from "User" where "nid" = $1)`, [sme_nid]);
-        if(rem.length == 0) {
-            let response = {
-                remaining: 0,
-            }
-            res.status(200).send(response);
-            return;
-        }
-        let info = await supabase.any(`select "remainingAmount" from "SmeLoan" where "id" = $1`, [rem[0].ongoingLoan]);
-        let response = {
-            remaining: info[0].remainingAmount,
-        }
-        res.status(200).send(response);
-    }
-    catch (error) {
-        console.error("Error in /buy_request/sme/info:", error);
-        let respone = {
-            status: "failed",
-            message: "Internal server error",
-        };
-        res.status(500).send(respone);
-    }
-});
+//     try {
+//         let rem = await supabase.any(`select "ongoingLoan" from "Sme" where "id" = (select "id" from "User" where "nid" = $1)`, [sme_nid]);
+//         if(rem.length == 0) {
+//             let response = {
+//                 remaining: 0,
+//             }
+//             res.status(200).send(response);
+//             return;
+//         }
+//         let info = await supabase.any(`select "remainingAmount" from "SmeLoan" where "id" = $1`, [rem[0].ongoingLoan]);
+//         let response = {
+//             remaining: info[0].remainingAmount,
+//         }
+//         res.status(200).send(response);
+//     }
+//     catch (error) {
+//         console.error("Error in /buy_request/sme/info:", error);
+//         let respone = {
+//             status: "failed",
+//             message: "Internal server error",
+//         };
+//         res.status(500).send(respone);
+//     }
+// });
 
 router.route("/farmer/submit").post(async (req, res) => {
     const { buyReq, buyItems } = req.body;
